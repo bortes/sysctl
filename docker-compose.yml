@@ -1,57 +1,8 @@
 version: "2"
 services:
-  app:
-    build: ./app/
-    ports:
-      - "8080:8080"
-    logging:
-      driver: "fluentd"
-      options:
-        fluentd-address: "localhost:24224"
-        tag: "docker.app"
-
-  fluentd:
-    depends_on:
-      - elasticsearch
-    build: ./fluentd/
-    ports:
-      - "24224:24224"
-    ulimits:
-      nofile:
-        soft: 65535
-        hard: 65535
-
-  elasticsearch:
-    cap_add:
-      - IPC_LOCK
-    depends_on:
-      - sysctl
-    environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - bootstrap.memory_lock=true
-      - cluster.name=log-driver
-      - discovery.zen.ping.unicast.hosts=elasticsearch
-      - network.host=_site_
-      - path.data=/usr/share/elasticsearch/data/$${HOSTNAME}
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.0.0
-    ports:
-      - "9200:9200"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-
-  sysctl:
+   sysctl:
     environment: 
-      - SYSCTL_KEY=vm.max_map_count
-      - SYSCTL_VALUE=262144
-    image: rawmind/alpine-sysctl:0.1
+      - SYSCTL_VM.MAX_MAP_COUNT=262144
+    image: sysctl
     network_mode: none
     privileged: true
-
-  kibana:
-    depends_on:
-      - elasticsearch
-    image: docker.elastic.co/kibana/kibana-oss:6.0.0
-    ports:
-      - "5601:5601"
