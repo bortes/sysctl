@@ -1,8 +1,9 @@
 version: "2"
 services:
    sysctl:
-    environment: 
+    build: .
+    environment:
       - SYSCTL_VM.MAX_MAP_COUNT=262144
-    image: sysctl
+    image: bortes/sysctl
     network_mode: none
     privileged: true
